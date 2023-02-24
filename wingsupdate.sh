@@ -61,8 +61,13 @@ echo "🔵 Iniciando Verificação da ${C1}Wings${C0}..."
 if [[ -f "/usr/local/bin/wings" ]]; then
     echo "🔵 ${C1}Wings${C0} Foi detectada, iniciando ${C2}script de atualização${C0}..."
 
-    echo "🔵 Executando ${C1}sudo systemctl stop wings${C0}..."
-    sudo systemctl stop wings
+    echo "🔵 Verificando se existe o ${C1}Queue${C0} das ${C1}Wings${C0}..."
+    if [[ -f "/etc/systemd/system/wings.service" ]]; then
+        echo "🔵 O ${C1}Queue'${C0} existe, continuando script."
+        systemctl stop wings.service
+    else
+        echo "🔵 O ${C1}Queue'${C0} não existe, continuando script."
+    fi
 
     echo "🔵 Executando ${C1}rm -r /usr/local/bin/wings${C0}..."
     rm -r /usr/local/bin/wings
@@ -114,20 +119,49 @@ if [[ -f "/usr/local/bin/wings" ]]; then
 
     echo "🔵 ${C1}Finalizando${C0} o Script..."
 
+    echo "🔵 Verificando ${C1}Queue${C0} das ${C1}Wings${C0}..."
+    if [[ -f "/etc/systemd/system/wings.service" ]]; then
+        echo "🔵 Ja Verificado, pulando."
+    else
+        echo "🔵 Criando ${C1}Queue${C0} das ${C1}Wings${C0}."
+
+cat > /etc/systemd/system/wings.service << EOL
+[Unit]
+Description=Pterodactyl Wings Daemon
+After=docker.service
+Requires=docker.service
+PartOf=docker.service
+
+[Service]
+User=root
+WorkingDirectory=/etc/pterodactyl
+LimitNOFILE=4096
+PIDFile=/var/run/wings/daemon.pid
+ExecStart=/usr/local/bin/wings
+Restart=on-failure
+StartLimitInterval=180
+StartLimitBurst=30
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+EOL
+    fi
+
     echo "🔵 Executando ${C1}sudo systemctl enable --now wings${C0}..."
     sudo systemctl enable --now wings
 
     echo "🔵 ${C1}Finalizado${C0} o Script. Tenha um Bom dia (*-*)/..."
 else
-
-    if [[ -f "/etc/systemd/system/wings.service" ]]; then
-        mkdir /usr/local/bin
-        echo "🔵 Pasta ${C1}'/usr/local/bin'${C0} criada com sucesso."
-    else
-        echo "🔵 A pasta ${C1}'/usr/local/bin'${C0} já existe."
-    fi
-    
     echo "🔵 ${C1}Wings${C0} ${C3}não${C0} detectada, iniciando ${C2}script de instalação${C0}..."
+    
+    echo "🔵 Verificando se existe o ${C1}Queue${C0} das ${C1}Wings${C0}..."
+    if [[ -f "/etc/systemd/system/wings.service" ]]; then
+        echo "🔵 O ${C1}Queue'${C0} existe, continuando script."
+        systemctl stop wings.service
+    else
+        echo "🔵 O ${C1}Queue'${C0} não existe, continuando script."
+    fi
 
     if which docker >/dev/null; then
         echo "🔵 O ${C1}Docker${C0} ja está instalado. pulando etapa..."
@@ -203,10 +237,31 @@ else
 
     echo "🔵 Verificando ${C1}Queue${C0} das ${C1}Wings${C0}..."
     if [[ -f "/etc/systemd/system/wings.service" ]]; then
-        mkdir /usr/local/bin
-        echo "🔵 Pasta ${C1}'/usr/local/bin'${C0} criada com sucesso."
+        echo "🔵 Ja Verificado, pulando."
     else
-        echo "🔵 A pasta ${C1}'/usr/local/bin'${C0} já existe."
+        echo "🔵 Criando ${C1}Queue${C0} das ${C1}Wings${C0}."
+
+cat > /etc/systemd/system/wings.service << EOL
+[Unit]
+Description=Pterodactyl Wings Daemon
+After=docker.service
+Requires=docker.service
+PartOf=docker.service
+
+[Service]
+User=root
+WorkingDirectory=/etc/pterodactyl
+LimitNOFILE=4096
+PIDFile=/var/run/wings/daemon.pid
+ExecStart=/usr/local/bin/wings
+Restart=on-failure
+StartLimitInterval=180
+StartLimitBurst=30
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+EOL
     fi
 
     echo "🔵 Executando ${C1}sudo systemctl enable --now wings${C0}..."
