@@ -63,10 +63,10 @@ if [[ -f "/usr/local/bin/wings" ]]; then
 
     echo "Verificando se existe o ${C1}Queue${C0} das ${C1}Wings${C0}..."
     if [[ -f "/etc/systemd/system/wings.service" ]]; then
-        echo "O ${C1}Queue'${C0} existe, continuando script."
+        echo "O ${C1}'Queue'${C0} existe, continuando script."
         systemctl stop wings.service
     else
-        echo "O ${C1}Queue'${C0} não existe, continuando script."
+        echo "O ${C1}'Queue'${C0} não existe, continuando script."
     fi
 
     echo "Executando ${C1}rm -r /usr/local/bin/wings${C0}..."
@@ -157,10 +157,10 @@ else
     
     echo "Verificando se existe o ${C1}Queue${C0} das ${C1}Wings${C0}..."
     if [[ -f "/etc/systemd/system/wings.service" ]]; then
-        echo "O ${C1}Queue'${C0} existe, continuando script."
+        echo "O ${C1}'Queue'${C0} existe, continuando script."
         systemctl stop wings.service
     else
-        echo "O ${C1}Queue'${C0} não existe, continuando script."
+        echo "O ${C1}'Queue'${C0} não existe, continuando script."
     fi
 
     if which docker >/dev/null; then
@@ -195,8 +195,8 @@ else
     echo "Configure ${C1}/etc/pterodactyl/config.yml${C0}..."
     sudo nano /etc/pterodactyl/config.yml
 
-    echo "Verifique se as ${C1}Wings${C0} vai estar online no painel."
-    sleep 2
+    echo "Verifique se as ${C1}Wings${C0} vai estar online no painel após executar o proximo comando.(o Script irá continuar após 20 segundos)"
+    sleep 20
 
     echo "Executando ${C1}sudo wings --debug${C0}..."
     sudo wings --debug
