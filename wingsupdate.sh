@@ -33,7 +33,7 @@ echo "
     |              ${C5}+@${C1}@@@= ${C5}.#${C1}@@@%:${C0}              |                                                     |
     |             ${C5}*@${C1}@@@-    ${C5}#${C1}@@@@-${C0}             | Versão: ${C1}Beta${C0}                                        |
     |            ${C5}#@${C1}@@@:      ${C5}*@${C1}@@@=${C0}            |                                                     |
-    |          ${C5}.%@${C1}@@%:        ${C5}+@${C1}@@@+${C0}           | Dependencia: ${C1}Nano${C0}                                   |
+    |          ${C5}.%@${C1}@@%:        ${C5}+@${C1}@@@+${C0}           | Dependencia: ${C1}Nano e cat{C0}                              |
     |         ${C5}:%@${C1}@@%.          ${C5}=@${C1}@@@*${C0}          |                                                     |
     |        ${C5}:%@${C1}@@#   ${C5}++${C1}++++++++@@@@@*${C0}         |                                                     |
     |       ${C5}=@${C1}@@@#  ${C5}.%@${C1}@@@@@@@@@@@@@@@%.${C0}       |                                                     |
@@ -73,49 +73,10 @@ if [[ -f "/usr/local/bin/wings" ]]; then
     rm -r /usr/local/bin/wings
 
     echo "Executando ${C1}Download das Wings${C0}..."
-    sudo curl -L -o /usr/local/bin/wings "https://github.com/pterodactyl/wings/releases/latest/download/wings_linux_$([[ "$(uname -m)" == "x86_64" ]] && echo "amd64" || echo "arm64")"
+    curl -L -o /usr/local/bin/wings "https://github.com/pterodactyl/wings/releases/latest/download/wings_linux_$([[ "$(uname -m)" == "x86_64" ]] && echo "amd64" || echo "arm64")"
 
-    echo "Executando ${C1}sudo chmod u+x /usr/local/bin/wings${C0}..."
-    sudo chmod u+x /usr/local/bin/wings
-
-    echo "Verifique se as ${C1}Wings${C0} vai estar online no painel."
-    sleep 2
-
-    echo "Executando ${C1}sudo wings --debug${C0}..."
-    sudo wings --debug
-
-    echo "A ${C1}Wings${C0} estava online? (${C2}sim${C0}/${C3}não${C0}). Use 'z' para Encerrar o Script (Somente se for necessario)."
-    read resposta
-
-    # Loop while para garantir que a resposta seja válida
-    while true; do
-        case $resposta in
-            [sSyY]* ) # Se a resposta começa com s, S, y ou Y
-                echo "Continuando o script..."
-                # Coloque aqui o código que deseja executar se a resposta for sim
-                break ;;
-
-            [nN]* ) # Se a resposta começa com n ou N
-                echo "Algo deu errado, verifique se o ${C1}/etc/pterodactyl/config.yml${C0} está correto."
-                sudo nano /etc/pterodactyl/config.yml
-
-                echo "Executando ${C1}Novamente${C0}..."
-                sudo wings --debug
-                # Coloque aqui o código que deseja executar se a resposta for não
-
-                echo "A ${C1}Wings${C0} estava online? (${C2}sim${C0}/${C3}não${C0}). Use 'z' para Encerrar o Script (Somente se for necessario)."
-                read resposta ;;
-
-
-            [zZ]* ) # Se a resposta começa com z ou Z
-                echo "Script cancelado, saindo..."
-                exit ;;
-
-            * ) # Se a resposta não é sim nem não
-                echo "Resposta inválida. Digite '${C2}sim${C0}' ou '${C3}não${C0}'."
-                read resposta ;;
-        esac
-    done
+    echo "Executando ${C1}chmod u+x /usr/local/bin/wings${C0}..."
+    chmod u+x /usr/local/bin/wings
 
     echo "${C1}Finalizando${C0} o Script..."
 
@@ -124,28 +85,8 @@ if [[ -f "/usr/local/bin/wings" ]]; then
         echo "Ja Verificado, pulando."
     else
         echo "Criando ${C1}Queue${C0} das ${C1}Wings${C0}."
-
-cat > /etc/systemd/system/wings.service << EOL
-[Unit]
-Description=Pterodactyl Wings Daemon
-After=docker.service
-Requires=docker.service
-PartOf=docker.service
-
-[Service]
-User=root
-WorkingDirectory=/etc/pterodactyl
-LimitNOFILE=4096
-PIDFile=/var/run/wings/daemon.pid
-ExecStart=/usr/local/bin/wings
-Restart=on-failure
-StartLimitInterval=180
-StartLimitBurst=30
-RestartSec=5s
-
-[Install]
-WantedBy=multi-user.target
-EOL
+        curl -s https://raw.githubusercontent.com/Next-Panel/Scripts/main/Wings/wings.service -o /etc/systemd/system/wings.service
+        chmod 777 /etc/systemd/system/wings.service
     fi
 
     echo "Executando ${C1}sudo systemctl enable --now wings${C0}..."
@@ -171,7 +112,7 @@ else
     fi
 
     echo "Executando ${C1}sudo systemctl enable --now docker${C0}..."
-    sudo systemctl enable --now docker
+    systemctl enable --now docker
 
     if [ ! -d "/etc/pterodactyl" ]; then
         mkdir /etc/pterodactyl
@@ -187,51 +128,19 @@ else
     else
         echo "A pasta ${C1}'/usr/local/bin'${C0} já existe."
     fi
-    sudo curl -L -o /usr/local/bin/wings "https://github.com/pterodactyl/wings/releases/latest/download/wings_linux_$([[ "$(uname -m)" == "x86_64" ]] && echo "amd64" || echo "arm64")"
+    curl -L -o /usr/local/bin/wings "https://github.com/pterodactyl/wings/releases/latest/download/wings_linux_$([[ "$(uname -m)" == "x86_64" ]] && echo "amd64" || echo "arm64")"
 
     echo "Executando ${C1}sudo chmod u+x /usr/local/bin/wings${C0}..."
-    sudo chmod u+x /usr/local/bin/wings
+    chmod u+x /usr/local/bin/wings
 
     echo "Configure ${C1}/etc/pterodactyl/config.yml${C0}..."
-    sudo nano /etc/pterodactyl/config.yml
+    nano /etc/pterodactyl/config.yml
 
     echo "Verifique se as ${C1}Wings${C0} vai estar online no painel após executar o proximo comando.(o Script irá continuar após 20 segundos)"
     sleep 20
 
     echo "Executando ${C1}sudo wings --debug${C0}..."
-    sudo wings --debug
-
-    echo "A ${C1}Wings${C0} estava online? (${C2}sim${C0}/${C3}não${C0}). Use 'z' para Encerrar o Script (Somente se for necessario)."
-    read resposta
-
-    # Loop while para garantir que a resposta seja válida
-    while true; do
-        case $resposta in
-            [sSyY]* ) # Se a resposta começa com s, S, y ou Y
-                echo "Continuando o script..."
-                # Coloque aqui o código que deseja executar se a resposta for sim
-                break ;;
-
-            [nN]* ) # Se a resposta começa com n ou N
-                echo "Algo deu errado, verifique se o ${C1}/etc/pterodactyl/config.yml${C0} está correto."
-                sudo nano /etc/pterodactyl/config.yml
-
-                echo "Executando ${C1}Novamente${C0}..."
-                sudo wings --debug
-                # Coloque aqui o código que deseja executar se a resposta for não
-
-                echo "A ${C1}Wings${C0} estava online? (${C2}sim${C0}/${C3}não${C0}). Use 'z' para Encerrar o Script (Somente se for necessario)."
-                read resposta ;;
-
-            [zZ]* ) # Se a resposta começa com z ou Z
-                echo "Script cancelado, saindo..."
-                exit ;;
-
-            * ) # Se a resposta não é sim nem não
-                echo "Resposta inválida. Digite '${C2}sim${C0}' ou '${C3}não${C0}'."
-                read resposta ;;
-        esac
-    done
+    wings --debug
 
     echo "${C1}Finalizando${C0} o Script..."
 
@@ -240,32 +149,12 @@ else
         echo "Ja Verificado, pulando."
     else
         echo "Criando ${C1}Queue${C0} das ${C1}Wings${C0}."
-
-cat > /etc/systemd/system/wings.service << EOL
-[Unit]
-Description=Pterodactyl Wings Daemon
-After=docker.service
-Requires=docker.service
-PartOf=docker.service
-
-[Service]
-User=root
-WorkingDirectory=/etc/pterodactyl
-LimitNOFILE=4096
-PIDFile=/var/run/wings/daemon.pid
-ExecStart=/usr/local/bin/wings
-Restart=on-failure
-StartLimitInterval=180
-StartLimitBurst=30
-RestartSec=5s
-
-[Install]
-WantedBy=multi-user.target
-EOL
+        curl -s https://raw.githubusercontent.com/Next-Panel/Scripts/main/Wings/wings.service -o /etc/systemd/system/wings.service  
+        chmod 777 /etc/systemd/system/wings.service
     fi
 
     echo "Executando ${C1}sudo systemctl enable --now wings${C0}..."
-    sudo systemctl enable --now wings
+    systemctl enable --now wings
 
     echo "${C1}Finalizado${C0} o Script. Tenha um Bom dia (*-*)/..."
 fi
