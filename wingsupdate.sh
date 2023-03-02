@@ -33,7 +33,7 @@ echo "
     |              ${C5}+@${C1}@@@= ${C5}.#${C1}@@@%:${C0}              |                                                     |
     |             ${C5}*@${C1}@@@-    ${C5}#${C1}@@@@-${C0}             | Versão: ${C1}Beta${C0}                                        |
     |            ${C5}#@${C1}@@@:      ${C5}*@${C1}@@@=${C0}            |                                                     |
-    |          ${C5}.%@${C1}@@%:        ${C5}+@${C1}@@@+${C0}           | Dependencia: ${C1}Nano e cat{C0}                              |
+    |          ${C5}.%@${C1}@@%:        ${C5}+@${C1}@@@+${C0}           | Dependencia: ${C1}Nano e Curl${C0}                            |
     |         ${C5}:%@${C1}@@%.          ${C5}=@${C1}@@@*${C0}          |                                                     |
     |        ${C5}:%@${C1}@@#   ${C5}++${C1}++++++++@@@@@*${C0}         |                                                     |
     |       ${C5}=@${C1}@@@#  ${C5}.%@${C1}@@@@@@@@@@@@@@@%.${C0}       |                                                     |
@@ -49,7 +49,7 @@ if which nano >/dev/null; then
     echo "O ${C1}Nano${C0} está instalado.continuando script..."
 else
     echo "O ${C1}Nano${C0} ${C3}não${C0} está instalado, instalando..."
-    sudo apt install nano
+    apt install nano
 
     echo "O ${C1}Nano${C0} foi instalado.continuando script..."
 fi
@@ -89,8 +89,8 @@ if [[ -f "/usr/local/bin/wings" ]]; then
         chmod 777 /etc/systemd/system/wings.service
     fi
 
-    echo "Executando ${C1}sudo systemctl enable --now wings${C0}..."
-    sudo systemctl enable --now wings
+    echo "Executando ${C1}systemctl enable --now wings${C0}..."
+    systemctl enable --now wings
 
     echo "${C1}Finalizado${C0} o Script. Tenha um Bom dia (*-*)/..."
 else
@@ -111,7 +111,7 @@ else
         curl -sSL https://get.docker.com/ | CHANNEL=stable bash
     fi
 
-    echo "Executando ${C1}sudo systemctl enable --now docker${C0}..."
+    echo "Executando ${C1}systemctl enable --now docker${C0}..."
     systemctl enable --now docker
 
     if [ ! -d "/etc/pterodactyl" ]; then
@@ -130,7 +130,7 @@ else
     fi
     curl -L -o /usr/local/bin/wings "https://github.com/pterodactyl/wings/releases/latest/download/wings_linux_$([[ "$(uname -m)" == "x86_64" ]] && echo "amd64" || echo "arm64")"
 
-    echo "Executando ${C1}sudo chmod u+x /usr/local/bin/wings${C0}..."
+    echo "Executando ${C1}chmod u+x /usr/local/bin/wings${C0}..."
     chmod u+x /usr/local/bin/wings
 
     echo "Configure ${C1}/etc/pterodactyl/config.yml${C0}..."
@@ -139,7 +139,7 @@ else
     echo "Verifique se as ${C1}Wings${C0} vai estar online no painel após executar o proximo comando.(o Script irá continuar após 20 segundos)"
     sleep 20
 
-    echo "Executando ${C1}sudo wings --debug${C0}..."
+    echo "Executando ${C1}wings --debug${C0}..."
     wings --debug
 
     echo "${C1}Finalizando${C0} o Script..."
@@ -153,7 +153,7 @@ else
         chmod 777 /etc/systemd/system/wings.service
     fi
 
-    echo "Executando ${C1}sudo systemctl enable --now wings${C0}..."
+    echo "Executando ${C1}systemctl enable --now wings${C0}..."
     systemctl enable --now wings
 
     echo "${C1}Finalizado${C0} o Script. Tenha um Bom dia (*-*)/..."
